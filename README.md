@@ -1,6 +1,5 @@
 
 
-![Build Status](https://travis-ci.com/sakymar/projetM2lemans.svg?token=nQfpSL4pPEpr1o7eKCCK&branch=master)
 
 # Rhapso-FileOrganizer
 

@@ -1,0 +1,21 @@
+.dropzone {
+    width: 100%;
+    height: 100%;
+    border-width: 2px;
+    border-color: rgb(102, 102, 102);
+    border-style: dashed;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    background-color: red !important;
+  }
+
+  .dropzone-active {
+    border-style: solid;
+    background-color: #66bb6a
+  }
+
+  .dropzone-reject {
+    border-style: solid;
+    background-color: #e57373;
+  }
