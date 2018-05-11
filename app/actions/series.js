@@ -27,6 +27,7 @@ export const showInFolder = outputPath => dispatch => {
 
 
 export const addSerie = serie => {
+  console.log("passage action",serie);
   return {
     type: ADD_SERIE,
     payload: { ...serie }
