@@ -12,17 +12,21 @@ const INITIAL_STATE = [];
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case SERIE_RENAMED:
-			return { ...state, [action.payload.path]: action.payload };
+			return[...action.payload.videos];
 		case ADD_SERIES:
-			return { ...state, ..._.mapKeys(action.payload, "path") };
-		case ADD_SERIE:
-			return [...state,action.payload];
+			console.log("REDUCER",state,action.payload);
+			let newSeries=action.payload
+			let newStateAdd=state;
+			newSeries.forEach(serie => {
+				serie.id=newStateAdd.length+1;
+				newStateAdd.push(serie);
+			});
+			console.log(newStateAdd);
+			return [...newStateAdd];
 		case REMOVE_SERIE:
 			let newState=state;
 			state.forEach((serie,index) =>{
-				console.log(serie.name);
-				console.log(action.payload.name);
-				if(serie.name==action.payload.name){
+				if(serie.id==action.payload.id){
 					state.splice(index,1);
 				}
 			})

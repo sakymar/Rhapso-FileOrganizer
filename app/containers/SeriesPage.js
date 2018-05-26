@@ -19,13 +19,25 @@ import Avatar from "material-ui/Avatar";
 import IconButton from "material-ui/IconButton";
 import fs from "fs";
 import fileEntryCache from "file-entry-cache";
+import { LinearProgress } from "material-ui/Progress";
+import { ipcRenderer } from "electron";
 
 class SeriesPage extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			videos: []
+			videos: [],
+			completed: 0,
+			loading: false,
+			destinationFolder: ""
 		};
+	}
+
+	componentDidMount() {
+		this.setState({
+			completed: this.props.progress * 100,
+			loading: this.props.progress * 100 === 100
+		});
 	}
 
 	renderChildren({ isDragActive, isDragReject }) {
@@ -50,30 +62,25 @@ class SeriesPage extends Component {
 		}
 	}
 
-	onDrop = files => {
+	onDrop = async files => {
 		// invalid file types are not added to files object
-		const videos = _.map(files, ({ name, path, size, type }) => {
+		//console.log("PASSAGE");
+		const videos = await _.map(files, ({ name, path, size, type }) => {
 			return { name, path, size, type };
 		});
+		console.log("ONDROP", files, videos);
 		if (videos.length) {
 			this.setState({ videos });
-			this.props.addSerie(videos[0]);
+			this.props.addSeries({
+				series: videos,
+				destinationFolder: this.state.destinationFolder
+			});
 		}
 	};
 
-
-	addSerie = () => {
-		const files = remote.dialog.showOpenDialog({
-			properties: ["openFile", "multiSelections"]
-		});
-
-		let cache = fileEntryCache.create("testCache");
-		let info = cache.getFileDescriptor(files[0]);
-	};
-
-	removeSerie(serie){
+	removeSerie(serie) {
 		this.props.removeSerie(serie);
-		this.setState({videos:this.props.series})
+		this.setState({ videos: this.props.series });
 	}
 
 	renderList() {
@@ -92,26 +99,31 @@ class SeriesPage extends Component {
 						}}
 					>
 						{series.map(serie => {
-							return (
-								<ListItem
-									key={serie.name}
-									style={{ borderBottom: "1px solid black" }}
-								>
-									<ListItemText
-										primary={serie.name}
-										secondary={serie.path}
-									/>
-									<ListItemSecondaryAction>
-										<IconButton
-											onClick={() => this.removeSerie(serie)
-											}
-											aria-label="Delete"
-										>
-											<DeleteIcon />
-										</IconButton>
-									</ListItemSecondaryAction>
-								</ListItem>
-							);
+							if (!serie.renamed) {
+								return (
+									<ListItem
+										key={serie.id}
+										style={{
+											borderBottom: "1px solid black"
+										}}
+									>
+										<ListItemText
+											primary={serie.name}
+											secondary={serie.path}
+										/>
+										<ListItemSecondaryAction>
+											<IconButton
+												onClick={() =>
+													this.removeSerie(serie)
+												}
+												aria-label="Delete"
+											>
+												<DeleteIcon />
+											</IconButton>
+										</ListItemSecondaryAction>
+									</ListItem>
+								);
+							}
 						})}
 						<ListItem
 							className={styles.dropListItem}
@@ -148,11 +160,17 @@ class SeriesPage extends Component {
 						{series.map(serie => {
 							return (
 								<ListItem
-									style={{ borderBottom: "1px solid black" }}
+									key={serie.id}
+									style={{
+										borderBottom: "1px solid black",
+										backgroundColor: serie.renamed
+											? "green"
+											: "white"
+									}}
 								>
 									<ListItemText
-										primary={serie.name}
-										secondary={serie.path}
+										primary={serie.outputName}
+										secondary={serie.outputPath}
 									/>
 								</ListItem>
 							);
@@ -163,10 +181,28 @@ class SeriesPage extends Component {
 		}
 	}
 
+	convertSeries = () => {
+		this.setState({ loading: true });
+		this.props.convertSeries(this.props.series);
+	};
+
+	changeDestinationFolder = () => {
+		let path = remote.dialog.showOpenDialog({
+			properties: ["openDirectory"]
+		});
+		console.log("PASSAGEEEEE");
+		if (path) {
+			path = path[0];
+			console.log(path);
+			this.setState({ destinationFolder: path });
+		}
+	};
+
 	render() {
-		console.log("props", this.props);
-		console.log("state", this.state);
+		//console.log("props", this.props);
+		//console.log("state", this.state);
 		let seriesList = this.renderList();
+		const { loading, completed } = this.state;
 		return (
 			<div style={{ marginLeft: "10%" }}>
 				<h1 style={{ marginLeft: "25%", marginTop: "5%" }}>
@@ -174,6 +210,11 @@ class SeriesPage extends Component {
 					Organize TV Series
 				</h1>
 				<h3 style={{ textAlign: "center" }}> Format</h3>
+				<div style={{ display: "flex", justifyContent: "center" }}>
+					<Button onClick={this.changeDestinationFolder}>
+						Destination Folder
+					</Button>
+				</div>
 				{this.props.series.length > 0 ? (
 					this.renderList()
 				) : (
@@ -187,6 +228,24 @@ class SeriesPage extends Component {
 						{this.renderChildren}
 					</Dropzone>
 				)}
+				<div
+					style={{
+						marginLeft: "15%",
+						marginRight: "15%",
+						margin: "auto"
+					}}
+				>
+					{loading ? (
+						<LinearProgress
+							style={{ width: "15px" }}
+							variant="determinate"
+							value={this.state.completed}
+						/>
+					) : (
+						""
+					)}
+				</div>
+
 				<div style={{ marginTop: "50px" }}>
 					<Button
 						style={{ marginLeft: "10%" }}
@@ -203,6 +262,7 @@ class SeriesPage extends Component {
 						icon
 						color="green"
 						labelPosition="right"
+						onClick={this.convertSeries}
 					>
 						Confirm
 						<Icon name="right arrow" />
@@ -214,14 +274,15 @@ class SeriesPage extends Component {
 }
 
 function mapStateToProps(state) {
-	const { series } = state;
+	const { series, progress } = state;
 	return {
-		series
+		series,
+		progress
 	};
 }
 
-function mapDispatchToProps(dispatch) {
-	return bindActionCreators(actions, dispatch);
-}
+// function mapDispatchToProps(dispatch) {
+// 	return bindActionCreators(actions, dispatch);
+// }
 
 export default connect(mapStateToProps, actions)(SeriesPage);
