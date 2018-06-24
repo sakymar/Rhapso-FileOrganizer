@@ -43,7 +43,7 @@ npm run dev
 * **Antoine Mesnil** 
 
 ## License
-MIT © [Antoine Mesnil](https://github.com/sakymar)
+Apache License 2.0 © [Antoine Mesnil](https://github.com/sakymar)
 
 
 
