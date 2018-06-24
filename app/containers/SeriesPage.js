@@ -6,20 +6,19 @@ import Dropzone from "react-dropzone";
 import styles from "./SeriesPage.css";
 import { Button, Icon } from "semantic-ui-react";
 import electron, { remote, dialog } from "electron";
-import List, {
-	ListItem,
-	ListItemAvatar,
-	ListItemIcon,
-	ListItemSecondaryAction,
-	ListItemText
-} from "material-ui/List";
+import List from "@material-ui/core/List"
+import ListItem from "@material-ui/core/ListItem"
+import ListItemAvatar from "@material-ui/core/ListItemAvatar"
+import ListItemIcon from "@material-ui/core/ListItemIcon"
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
+import ListItemText from "@material-ui/core/ListItemText"
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
-import Avatar from "material-ui/Avatar";
-import IconButton from "material-ui/IconButton";
+import Avatar from "@material-ui/core/Avatar";
+import IconButton from "@material-ui/core/IconButton";
 import fs from "fs";
 import fileEntryCache from "file-entry-cache";
-import { LinearProgress } from "material-ui/Progress";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import { ipcRenderer } from "electron";
 
 class SeriesPage extends Component {
@@ -190,7 +189,6 @@ class SeriesPage extends Component {
 		let path = remote.dialog.showOpenDialog({
 			properties: ["openDirectory"]
 		});
-		console.log("PASSAGEEEEE");
 		if (path) {
 			path = path[0];
 			console.log(path);

@@ -15,13 +15,17 @@ export default class Sidebar extends Component<Props> {
             <Link to={'/series'}>
               <Menu.Item name='television' as='a'>
                 <Icon name='television' />
-                TV Series
+                Rename
               </Menu.Item>
             </Link>
             
             <Menu.Item name='film' as='a'>
               <Icon name='film' />
-              Movies
+              Delete
+            </Menu.Item>
+            <Menu.Item name='bar graph' as='a'>
+              <Icon name='bar chart' />
+              Create
             </Menu.Item>
             <Menu.Item name='bar graph' as='a'>
               <Icon name='bar chart' />
