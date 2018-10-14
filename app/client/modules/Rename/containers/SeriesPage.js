@@ -1,17 +1,17 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as actions from "../actions/series";
+import * as actions from "../../../actions/series";
 import Dropzone from "react-dropzone";
-import styles from "./SeriesPage.css";
+import styles from "../styles/SeriesPage.css";
 import { Button, Icon } from "semantic-ui-react";
 import electron, { remote, dialog } from "electron";
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemAvatar from "@material-ui/core/ListItemAvatar"
-import ListItemIcon from "@material-ui/core/ListItemIcon"
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
-import ListItemText from "@material-ui/core/ListItemText"
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
 import Avatar from "@material-ui/core/Avatar";
@@ -283,4 +283,7 @@ function mapStateToProps(state) {
 // 	return bindActionCreators(actions, dispatch);
 // }
 
-export default connect(mapStateToProps, actions)(SeriesPage);
+export default connect(
+	mapStateToProps,
+	actions
+)(SeriesPage);
