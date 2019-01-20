@@ -20,11 +20,15 @@ import fs from "fs";
 import fileEntryCache from "file-entry-cache";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { ipcRenderer } from "electron";
+import Title from "../../../components/Title";
+import SerieList from "../components/SerieList";
+import SelectFormat from "../../../components/SelectFormat";
 
 class SeriesPage extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			format: 0,
 			videos: [],
 			completed: 0,
 			loading: false,
@@ -67,6 +71,7 @@ class SeriesPage extends Component {
 		const videos = await _.map(files, ({ name, path, size, type }) => {
 			return { name, path, size, type };
 		});
+
 		console.log("ONDROP", files, videos);
 		if (videos.length) {
 			this.setState({ videos });
@@ -82,104 +87,6 @@ class SeriesPage extends Component {
 		this.setState({ videos: this.props.series });
 	}
 
-	renderList() {
-		let series = this.props.series;
-		if (series && series.length > 0) {
-			return (
-				<div style={{ display: "flex" }}>
-					<List
-						style={{
-							backgroundColor: "white",
-							width: "45%",
-							marginLeft: "5%",
-							borderRadius: "2px",
-							paddingBottom: "0px",
-							marginBottom: "0px"
-						}}
-					>
-						{series.map(serie => {
-							if (!serie.renamed) {
-								return (
-									<ListItem
-										key={serie.id}
-										style={{
-											borderBottom: "1px solid black"
-										}}
-									>
-										<ListItemText
-											primary={serie.name}
-											secondary={serie.path}
-										/>
-										<ListItemSecondaryAction>
-											<IconButton
-												onClick={() =>
-													this.removeSerie(serie)
-												}
-												aria-label="Delete"
-											>
-												<DeleteIcon />
-											</IconButton>
-										</ListItemSecondaryAction>
-									</ListItem>
-								);
-							}
-						})}
-						<ListItem
-							className={styles.dropListItem}
-							style={{ padding: 0 }}
-						>
-							<Dropzone
-								onDrop={this.onDrop}
-								multiple
-								activeStyle={{
-									backgroundColor: "red",
-									border: "5px solid red"
-								}}
-								rejectClassName="dropzone-reject"
-								style={{
-									width: "100%",
-									height: "100px",
-									display: "flex",
-									justifyContent: "center",
-									alignItems: "center"
-								}}
-							>
-								<AddIcon style={{ color: "red" }} />
-							</Dropzone>
-						</ListItem>
-					</List>
-					<List
-						style={{
-							backgroundColor: "white",
-							width: "40%",
-							marginLeft: "5%",
-							borderRadius: "2px"
-						}}
-					>
-						{series.map(serie => {
-							return (
-								<ListItem
-									key={serie.id}
-									style={{
-										borderBottom: "1px solid black",
-										backgroundColor: serie.renamed
-											? "green"
-											: "white"
-									}}
-								>
-									<ListItemText
-										primary={serie.outputName}
-										secondary={serie.outputPath}
-									/>
-								</ListItem>
-							);
-						})}
-					</List>
-				</div>
-			);
-		}
-	}
-
 	convertSeries = () => {
 		this.setState({ loading: true });
 		this.props.convertSeries(this.props.series);
@@ -191,30 +98,61 @@ class SeriesPage extends Component {
 		});
 		if (path) {
 			path = path[0];
-			console.log(path);
+			console.log("directory", path);
 			this.setState({ destinationFolder: path });
 		}
+		const files = fs.readdirSync(path);
+		console.log(files);
 	};
 
 	render() {
 		//console.log("props", this.props);
 		//console.log("state", this.state);
-		let seriesList = this.renderList();
-		const { loading, completed } = this.state;
+		const { format, loading, completed } = this.state;
+
+		const options = [
+			{
+				value: 0,
+				label: "By Date"
+			},
+			{
+				value: 1,
+				label: "By Size"
+			},
+			{
+				value: 2,
+				label: "By Extension"
+			},
+			{
+				value: 3,
+				label: "By Serie Format"
+			}
+		];
 		return (
-			<div style={{ marginLeft: "10%" }}>
-				<h1 style={{ marginLeft: "25%", marginTop: "5%" }}>
-					{" "}
-					Organize TV Series
-				</h1>
-				<h3 style={{ textAlign: "center" }}> Format</h3>
+			<div className="containerScreen">
+				<Title title="Rename" />
+				<SelectFormat
+					value={format}
+					onChange={value => this.setState({ format: value })}
+					options={options}
+					style={{ color: "white", minWidth: "300px" }}
+					classes={{ icon: { color: "white" } }}
+				/>
 				<div style={{ display: "flex", justifyContent: "center" }}>
 					<Button onClick={this.changeDestinationFolder}>
 						Destination Folder
 					</Button>
+					<Button onClick={this.changeDestinationFolder}>
+						Format
+					</Button>
 				</div>
+				<div>Example : folder/file --> folder/year/month/file</div>
 				{this.props.series.length > 0 ? (
-					this.renderList()
+					<SerieList
+						series={this.props.series}
+						onRemoveElement={serie => this.removeSerie(serie)}
+						onDrop={this.onDrop}
+					/>
 				) : (
 					<Dropzone
 						onDrop={this.onDrop}

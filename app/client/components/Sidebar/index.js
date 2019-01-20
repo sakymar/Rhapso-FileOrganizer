@@ -26,6 +26,7 @@ export default class Sidebar extends Component<Props> {
 				icon="labeled"
 				vertical
 				inverted
+				style={{ width: "10%" }}
 			>
 				<Link to={"/series"}>
 					<Menu.Item name="television" as="a">

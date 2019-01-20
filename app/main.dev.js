@@ -68,6 +68,7 @@ app.on("ready", async () => {
 	mainWindow = new BrowserWindow({
 		show: false,
 		width: 1024,
+		darkTheme: true,
 		height: 728,
 		title: "Rhapso-FileOrganizer"
 	});
@@ -94,50 +95,46 @@ app.on("ready", async () => {
 
 ipcMain.on("series:added", (event, videos) => {
 	console.log(videos);
-	let {series,destinationFolder} = videos;
-	
+	let { series, destinationFolder } = videos;
+
 	series.forEach(video => {
 		let path = video.path;
-		
+
 		let outputDirectory = video.path.split(video.name)[0];
 		console.log(outputDirectory);
-		if(destinationFolder!=""){
-			outputDirectory=`${destinationFolder}\\`;
+		if (destinationFolder != "") {
+			outputDirectory = `${destinationFolder}\\`;
 		}
 		console.log(outputDirectory);
 		let result;
-		try{
+		try {
 			result = parser(video.name);
-		}
-		catch(err){
+		} catch (err) {
 			console.log(err);
-			return(err);
+			return err;
 		}
-		if(result){
-		//console.log("test");
-		//console.log(result);
-		let outputName = `${result.show} - Season ${result.season} Episode ${
-			result.episode
-		}.${result.ext}`;
+		if (result) {
+			//console.log("test");
+			//console.log(result);
+			let outputName = `${result.show} - Season ${
+				result.season
+			} Episode ${result.episode}.${result.ext}`;
 
-		let outputPath = `${outputDirectory}${result.show}\\Season ${
-			result.season
-		}\\${outputName}`;
-		//console.log("test2");
-		//console.log(outputDirectory);
-		//console.log(outputName);
-		//console.log(outputPath);
-		//console.log(result);
-		video.outputPath = outputPath;
-		video.outputName = outputName;
-		}
-		else{
+			let outputPath = `${outputDirectory}${result.show}\\Season ${
+				result.season
+			}\\${outputName}`;
+			//console.log("test2");
+			//console.log(outputDirectory);
+			//console.log(outputName);
+			//console.log(outputPath);
+			//console.log(result);
+			video.outputPath = outputPath;
+			video.outputName = outputName;
+		} else {
 			video.outputPath = video.path;
 			video.outputName = video.name;
-			video.error=true;
+			video.error = true;
 		}
-
-
 	});
 	console.log("PASSAGE VIDEO");
 	mainWindow.webContents.send("metadata:complete", series);
