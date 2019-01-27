@@ -7,6 +7,7 @@ const SelectFormat = ({ value, onChange, options, ...otherProps }) => {
 		<Select
 			value={value}
 			onChange={event => onChange(event.target.value)}
+			classes={{ icon: { color: "white" } }}
 			{...otherProps}
 		>
 			{options.map(option => (

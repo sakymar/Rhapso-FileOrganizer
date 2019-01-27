@@ -67,9 +67,10 @@ app.on("ready", async () => {
 
 	mainWindow = new BrowserWindow({
 		show: false,
-		width: 1024,
+		width: 1200,
 		darkTheme: true,
-		height: 728,
+		frame: false,
+		height: 700,
 		title: "Rhapso-FileOrganizer"
 	});
 

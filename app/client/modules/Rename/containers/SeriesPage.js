@@ -135,7 +135,11 @@ class SeriesPage extends Component {
 					value={format}
 					onChange={value => this.setState({ format: value })}
 					options={options}
-					style={{ color: "white", minWidth: "300px" }}
+					style={{
+						color: "white",
+						minWidth: "300px",
+						borderBottom: "1px solid white"
+					}}
 					classes={{ icon: { color: "white" } }}
 				/>
 				<div style={{ display: "flex", justifyContent: "center" }}>
@@ -146,7 +150,16 @@ class SeriesPage extends Component {
 						Format
 					</Button>
 				</div>
-				<div>Example : folder/file --> folder/year/month/file</div>
+				<div
+					style={{
+						display: "flex",
+						justifyContent: "center",
+						marginTop: 20,
+						marginBottom: 20
+					}}
+				>
+					Example : folder/file --> folder/year/month/file
+				</div>
 				{this.props.series.length > 0 ? (
 					<SerieList
 						series={this.props.series}
@@ -184,9 +197,12 @@ class SeriesPage extends Component {
 
 				<div style={{ marginTop: "50px" }}>
 					<Button
-						style={{ marginLeft: "10%" }}
+						style={{
+							marginLeft: "10%",
+							backgroundColor: "#AB2421",
+							color: "white"
+						}}
 						icon
-						color="red"
 						labelPosition="right"
 						onClick={this.props.removeAllSeries}
 					>
@@ -194,9 +210,12 @@ class SeriesPage extends Component {
 						<Icon name="cancel" />
 					</Button>
 					<Button
-						style={{ marginLeft: "60%" }}
+						style={{
+							marginLeft: "60%",
+							backgroundColor: "#45F556",
+							color: "white"
+						}}
 						icon
-						color="green"
 						labelPosition="right"
 						onClick={this.convertSeries}
 					>
