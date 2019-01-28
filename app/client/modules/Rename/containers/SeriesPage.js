@@ -137,46 +137,53 @@ class SeriesPage extends Component {
 					options={options}
 					style={{
 						color: "white",
-						minWidth: "300px",
-						borderBottom: "1px solid white"
+						minWidth: 300,
+						borderBottom: "1px solid white",
+						marginLeft: 30,
+						fontSize: 16
 					}}
 					classes={{ icon: { color: "white" } }}
 				/>
-				<div style={{ display: "flex", justifyContent: "center" }}>
-					<Button onClick={this.changeDestinationFolder}>
-						Destination Folder
-					</Button>
-					<Button onClick={this.changeDestinationFolder}>
-						Format
-					</Button>
-				</div>
 				<div
 					style={{
 						display: "flex",
-						justifyContent: "center",
-						marginTop: 20,
-						marginBottom: 20
+						flexDirection: "column",
+						justifyConten: "center",
+						alignItems: "center",
+						marginTop: 50
 					}}
 				>
-					Example : folder/file --> folder/year/month/file
+					<div style={{ display: "flex", justifyContent: "center" }}>
+						<Button onClick={this.changeDestinationFolder}>
+							Destination Folder
+						</Button>
+						<Button onClick={this.changeDestinationFolder}>
+							Format
+						</Button>
+					</div>
+					<div style={{ marginTop: 20, marginBottom: 20 }}>
+						Example : folder/file --> folder/year/month/file
+					</div>
 				</div>
-				{this.props.series.length > 0 ? (
-					<SerieList
-						series={this.props.series}
-						onRemoveElement={serie => this.removeSerie(serie)}
-						onDrop={this.onDrop}
-					/>
-				) : (
-					<Dropzone
-						onDrop={this.onDrop}
-						multiple
-						className="dropzone"
-						activeClassName="dropzone-active"
-						rejectClassName="dropzone-reject"
-					>
-						{this.renderChildren}
-					</Dropzone>
-				)}
+				<div style={{ maxHeight: "60vh", overflowY: "scroll" }}>
+					{this.props.series.length > 0 ? (
+						<SerieList
+							series={this.props.series}
+							onRemoveElement={serie => this.removeSerie(serie)}
+							onDrop={this.onDrop}
+						/>
+					) : (
+						<Dropzone
+							onDrop={this.onDrop}
+							multiple
+							className="dropzone"
+							activeClassName="dropzone-active"
+							rejectClassName="dropzone-reject"
+						>
+							{this.renderChildren}
+						</Dropzone>
+					)}
+				</div>
 				<div
 					style={{
 						marginLeft: "15%",
