@@ -15,7 +15,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
 import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
 import fs from "fs";
 import fileEntryCache from "file-entry-cache";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -24,11 +23,16 @@ import Title from "../../../components/Title";
 import SerieList from "../components/SerieList";
 import SelectFormat from "../../../components/SelectFormat";
 
+import Select from "@material-ui/core/Select";
+import { Button as MButton, Icon as MIcon } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
+
 class SeriesPage extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			format: 0,
+			formatDate: [0],
 			videos: [],
 			completed: 0,
 			loading: false,
@@ -98,26 +102,23 @@ class SeriesPage extends Component {
 		});
 		if (path) {
 			path = path[0];
-			console.log("directory", path);
 			this.setState({ destinationFolder: path });
 		}
-		const files = fs.readdirSync(path);
-		console.log(files);
+	};
+
+	handleRemoveFormatDate = index => {
+		let { formatDate } = this.state;
+		formatDate.splice(index, 1);
+		this.setState({ formatDate });
 	};
 
 	render() {
-		//console.log("props", this.props);
-		//console.log("state", this.state);
 		const { format, loading, completed } = this.state;
 
 		const options = [
 			{
 				value: 0,
 				label: "By Date"
-			},
-			{
-				value: 1,
-				label: "By Size"
 			},
 			{
 				value: 2,
@@ -128,9 +129,36 @@ class SeriesPage extends Component {
 				label: "By Serie Format"
 			}
 		];
+
+		const dateOptions = [
+			{
+				value: 0,
+				label: "Decade"
+			},
+			{
+				value: 1,
+				label: "Year"
+			},
+			{
+				value: 2,
+				label: "Month"
+			},
+			{
+				value: 3,
+				label: "Week"
+			},
+			{
+				value: 4,
+				label: "Day"
+			},
+			{
+				value: 5,
+				label: "Hour"
+			}
+		];
 		return (
 			<div className="containerScreen">
-				<Title title="Rename" />
+				<Title title="Move / Rename" />
 				<SelectFormat
 					value={format}
 					onChange={value => this.setState({ format: value })}
@@ -157,12 +185,92 @@ class SeriesPage extends Component {
 						<Button onClick={this.changeDestinationFolder}>
 							Destination Folder
 						</Button>
-						<Button onClick={this.changeDestinationFolder}>
-							Format
-						</Button>
+						{this.state.formatDate.map((format, index) => (
+							<div>
+								<SelectFormat
+									value={this.state.formatDate[index]}
+									onChange={value =>
+										handleChangeFormatDate(value, index)
+									}
+									style={{
+										color: "white",
+										minWidth: 150,
+										borderBottom: "1px solid white",
+										marginLeft: 30,
+										fontSize: 16
+									}}
+									classes={{ icon: { color: "white" } }}
+									options={dateOptions.slice(
+										this.state.formatDate[index - 1],
+										dateOptions.length + 1
+									)}
+								/>
+								<MButton
+									variant="fab"
+									color="secondary"
+									style={{
+										width: 30,
+										height: 30,
+										minHeight: 30,
+										minWidth: 30
+									}}
+									onClick={() =>
+										this.handleRemoveFormatDate(index)
+									}
+								>
+									<CloseIcon />
+								</MButton>
+								/
+							</div>
+						))}
+						<MButton
+							onClick={() =>
+								this.setState({
+									formatDate: [
+										...this.state.formatDate,
+										typeof this.state.formatDate[
+											this.state.formatDate.length - 1
+										] != "undefined"
+											? this.state.formatDate[
+													this.state.formatDate
+														.length - 1
+											  ] + 1
+											: 0
+									]
+								})
+							}
+							style={{
+								width: 30,
+								height: 30,
+								minHeight: 30,
+								minWidth: 30
+							}}
+							variant="fab"
+							color="secondary"
+							aria-label="Edit"
+						>
+							<AddIcon />
+						</MButton>
 					</div>
-					<div style={{ marginTop: 20, marginBottom: 20 }}>
-						Example : folder/file --> folder/year/month/file
+					<div
+						style={{
+							marginTop: 20,
+							marginBottom: 20,
+							display: "flex",
+							flexDirection: "row",
+							alignItems: "center",
+							fontSize: 12
+						}}
+					>
+						<p>
+							Example : folder/file -->{" "}
+							{this.state.destinationFolder}{" "}
+						</p>
+						{this.state.formatDate.map(part => (
+							<p style={{ fontSize: 12 }}>
+								{dateOptions[part].label}/
+							</p>
+						))}
 					</div>
 				</div>
 				<div style={{ maxHeight: "60vh", overflowY: "scroll" }}>

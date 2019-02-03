@@ -1,4 +1,3 @@
-// @flow
 import React, { Component } from "react";
 import {
 	Sidebar as SidebarSemantic,
@@ -33,25 +32,30 @@ export default class Sidebar extends Component<Props> {
 					backgroundColor: "#7E2991"
 				}}
 			>
-				<Link to={"/series"}>
+				<Link to={"/create"}>
 					<Menu.Item name="television">
-						<Icon name="television" />
-						Rename
+						<Icon.Group size="big">
+							<Icon name="file outline" />
+							<Icon corner="top right" inverted name="add" />
+						</Icon.Group>
+						<p style={{ fontSize: 15 }}>Create</p>
 					</Menu.Item>
 				</Link>
-
-				<Menu.Item name="film">
-					<Icon name="film" />
-					Delete
-				</Menu.Item>
-				<Menu.Item name="bar graph">
-					<Icon name="bar chart" />
-					Create
-				</Menu.Item>
-				<Menu.Item name="bar graph">
-					<Icon name="bar chart" />
-					Stats
-				</Menu.Item>
+				<Link to={"/series"}>
+					<Menu.Item name="film">
+						<Icon name="copy outline" />
+						Move & Rename
+					</Menu.Item>
+				</Link>
+				<Link to={"/delete"}>
+					<Menu.Item name="television">
+						<Icon.Group size="big">
+							<Icon name="file outline" />
+							<Icon corner="top right" inverted name="delete" />
+						</Icon.Group>
+						<p style={{ fontSize: 15 }}>Delete</p>
+					</Menu.Item>
+				</Link>
 			</SidebarSemantic>
 		);
 	}

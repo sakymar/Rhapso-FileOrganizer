@@ -1,12 +1,16 @@
 import React from "react";
-import "./style.css";
+import styled from "styled-components";
 
-const Title = ({ title, style }) => {
-	return (
-		<h1 className="title" style={style}>
-			{title}
-		</h1>
-	);
-};
+const TitleContainer = styled.h1`
+	font-size: 30px;
+	font-family: Raleway !important;
+	font-weight: 200;
+`;
+
+const Title = ({ title, style }) => (
+	<TitleContainer className="title" style={style}>
+		{title}
+	</TitleContainer>
+);
 
 export default Title;
