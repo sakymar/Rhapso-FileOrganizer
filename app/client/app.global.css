@@ -5,117 +5,118 @@
 @import "~font-awesome/css/font-awesome.css";
 
 body {
-	position: relative;
-	color: white;
-	height: 100vh;
-	background-color: white;
-	font-family: Arial, Helvetica, Helvetica Neue, serif;
-	overflow-y: hidden;
+  position: relative;
+  color: white;
+  height: 100vh;
+  background-color: white;
+  font-family: Arial, Helvetica, Helvetica Neue, serif;
+  overflow-y: hidden;
 }
 
 h2 {
-	margin: 0;
-	font-size: 2.25rem;
-	font-weight: bold;
-	letter-spacing: -0.025em;
-	color: #fff;
+  margin: 0;
+  font-size: 2.25rem;
+  font-weight: bold;
+  letter-spacing: -0.025em;
+  color: #fff;
 }
 
 p {
-	font-size: 24px;
+  font-size: 24px;
 }
 
 li {
-	list-style: none;
+  list-style: none;
 }
 
 a {
-	color: white;
-	opacity: 0.75;
-	text-decoration: none;
+  color: white;
+  opacity: 0.75;
+  text-decoration: none;
 }
 
 a:hover {
-	opacity: 1;
-	text-decoration: none;
-	cursor: pointer;
+  opacity: 1;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .dropzone {
-	width: 70%;
-	margin-left: 15%;
-	height: 100%;
-	min-height: 50vh;
-	border-width: 2px;
-	border-color: rgb(102, 102, 102);
-	border-style: dashed;
-	border-radius: 5px;
-	display: flex;
-	justify-content: center;
+  width: 70%;
+  margin-left: 15%;
+  height: 100%;
+  min-height: 30vh;
+  border-width: 2px;
+  border-color: rgb(102, 102, 102);
+  border-style: dashed;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
 }
 
 .dropzone:hover {
-	cursor: pointer;
-	border-color: #66bb6a;
+  cursor: pointer;
+  border-color: #66bb6a;
 }
 
 .dropzone-active {
-	border-style: solid;
-	background-color: #66bb6a;
+  border-style: solid;
+  background-color: #66bb6a;
 }
 
 .dropzone-reject {
-	border-style: solid;
-	background-color: #e57373;
+  border-style: solid;
+  background-color: #e57373;
 }
 
 .drop-message {
-	display: flex;
-	align-self: center;
-	width: 50%;
+  display: flex;
+  align-self: center;
+  width: 50%;
 }
 
 @font-face {
-	font-family: Raleway;
-	src: url(./assets/fonts/Raleway/Raleway-Light.ttf);
+  font-family: Raleway;
+  src: url(./assets/fonts/Raleway/Raleway-Light.ttf);
 }
 
 .title {
-	font-family: "Raleway", sans-serif;
-	font-size: 35px;
-	font-weight: 400;
-	letter-spacing: 3px;
-	margin-left: 30px;
+  font-family: "Raleway", sans-serif;
+  font-size: 35px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  margin-left: 30px;
 }
 
 .containerScreen {
-	margin-left: 8%;
-	padding: 3%;
-	min-height: 100vh;
-	background: linear-gradient(120.41deg, #442c84, #021f46 70.42%, #07046b);
-	-webkit-app-region: no-drag;
+  margin-left: 8%;
+  padding: 3%;
+  min-height: 100vh;
+  background: linear-gradient(120.41deg, #442c84, #021f46 70.42%, #07046b);
+  -webkit-app-region: no-drag;
+  overflow-y: scroll;
 }
 
 .titleBar {
-	-webkit-app-region: drag;
+  -webkit-app-region: drag;
 }
 
 .titleBar:hover {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 .ui.sidebar {
-	margin-top: 30px !important;
+  margin-top: 30px !important;
 }
 
 .noDrag {
-	-webkit-app-region: no-drag;
+  -webkit-app-region: no-drag;
 }
 
 .MuiSvgIcon-root-19 {
-	color: white !important;
+  color: white !important;
 }
 
 .MuiInput-underline-10 {
-	color: white !important;
+  color: white !important;
 }
