@@ -163,3 +163,4 @@ ipcMain.on("folder:open", (event, outputPath) => {
 });
 
 import "./server/create";
+import "./server/rename";

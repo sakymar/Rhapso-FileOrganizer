@@ -1,31 +1,18 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 import * as actions from "../../../actions/series";
 import Dropzone from "react-dropzone";
-import styles from "../styles/SeriesPage.css";
 import { Button, Icon } from "semantic-ui-react";
-import electron, { remote, dialog } from "electron";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import DeleteIcon from "@material-ui/icons/Delete";
-import AddIcon from "@material-ui/icons/Add";
-import Avatar from "@material-ui/core/Avatar";
-import fs from "fs";
-import fileEntryCache from "file-entry-cache";
+import { remote } from "electron";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import { ipcRenderer } from "electron";
 import Title from "../../../components/Title";
 import SerieList from "../components/SerieList";
-import SelectFormat from "../../../components/SelectFormat";
 
-import Select from "@material-ui/core/Select";
-import { Button as MButton, Icon as MIcon } from "@material-ui/core";
-import CloseIcon from "@material-ui/icons/Close";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import ByDate from "./ByDate";
+import ByExtension from "./ByExtension";
 
 class SeriesPage extends Component {
   constructor(props) {
@@ -128,36 +115,28 @@ class SeriesPage extends Component {
       }
     ];
 
-    const dateOptions = [
-      {
-        value: 0,
-        label: "Decade"
-      },
-      {
-        value: 1,
-        label: "Year"
-      },
-      {
-        value: 2,
-        label: "Month"
-      },
-      {
-        value: 3,
-        label: "Week"
-      },
-      {
-        value: 4,
-        label: "Day"
-      },
-      {
-        value: 5,
-        label: "Hour"
-      }
-    ];
     return (
       <div className="containerScreen">
         <Title title="Move / Rename" />
-        <SelectFormat
+        <AppBar
+          style={{ backgroundColor: "transparent" }}
+          position="static"
+          color="default"
+        >
+          <Tabs
+            style={{ backgroundColor: "transparent" }}
+            value={this.state.tabIndex}
+            onChange={(event, value) => this.setState({ tabIndex: value })}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+          >
+            <Tab style={{ color: "white" }} label="By Extension" />
+            <Tab style={{ color: "white" }} label="By Date" />
+            <Tab style={{ color: "white" }} label="By Serie Format" />
+          </Tabs>
+        </AppBar>
+        {/* <SelectFormat
           value={format}
           onChange={value => this.setState({ format: value })}
           options={options}
@@ -169,98 +148,28 @@ class SeriesPage extends Component {
             fontSize: 16
           }}
           classes={{ icon: { color: "white" } }}
-        />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyConten: "center",
-            alignItems: "center",
-            marginTop: 20
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Button onClick={this.changeDestinationFolder}>
-              Destination Folder
-            </Button>
-            {this.state.formatDate.map((format, index) => (
-              <div>
-                <SelectFormat
-                  value={this.state.formatDate[index]}
-                  onChange={value => handleChangeFormatDate(value, index)}
-                  style={{
-                    color: "white",
-                    minWidth: 150,
-                    borderBottom: "1px solid white",
-                    marginLeft: 30,
-                    fontSize: 16
-                  }}
-                  classes={{ icon: { color: "white" } }}
-                  options={dateOptions.slice(
-                    this.state.formatDate[index - 1],
-                    dateOptions.length + 1
-                  )}
-                />
-                <MButton
-                  variant="fab"
-                  color="secondary"
-                  style={{
-                    width: 30,
-                    height: 30,
-                    minHeight: 30,
-                    minWidth: 30
-                  }}
-                  onClick={() => this.handleRemoveFormatDate(index)}
-                >
-                  <CloseIcon />
-                </MButton>
-                /
-              </div>
-            ))}
-            <MButton
-              onClick={() =>
-                this.setState({
-                  formatDate: [
-                    ...this.state.formatDate,
-                    typeof this.state.formatDate[
-                      this.state.formatDate.length - 1
-                    ] != "undefined"
-                      ? this.state.formatDate[
-                          this.state.formatDate.length - 1
-                        ] + 1
-                      : 0
-                  ]
-                })
-              }
-              style={{
-                width: 30,
-                height: 30,
-                minHeight: 30,
-                minWidth: 30
-              }}
-              variant="fab"
-              color="secondary"
-              aria-label="Edit"
-            >
-              <AddIcon />
-            </MButton>
-          </div>
-          <div
-            style={{
-              marginTop: 10,
-              marginBottom: 20,
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              fontSize: 12
-            }}
-          >
-            <p>Example : folder/file --> {this.state.destinationFolder} </p>
-            {this.state.formatDate.map(part => (
-              <p style={{ fontSize: 12 }}>{dateOptions[part].label}/</p>
-            ))}
-          </div>
-        </div>
+        /> */}
+        {this.state.tabIndex === 0 && (
+          <ByExtension
+            recursive={this.state.recursive}
+            onChangeRecursive={() =>
+              this.setState({
+                recursive: !this.state.recursive
+              })
+            }
+            changeDestinationFolder={this.changeDestinationFolder}
+            sourceFolder={this.state.destinationFolder}
+          />
+        )}
+        {this.state.tabIndex === 1 && (
+          <ByDate
+            formatDate={this.state.formatDate}
+            destinationFolder={this.state.destinationFolder}
+            handleChangeFormatDate={this.handleChangeFormatDate}
+            handleRemoveFormatDate={index => this.handleRemoveFormatDate(index)}
+            handleAddFormatDate={value => this.setState({ formatDate: value })}
+          />
+        )}
         <div style={{ maxHeight: "60vh", overflowY: "scroll" }}>
           {this.props.series.length > 0 ? (
             <SerieList
@@ -338,10 +247,6 @@ function mapStateToProps(state) {
     progress
   };
 }
-
-// function mapDispatchToProps(dispatch) {
-// 	return bindActionCreators(actions, dispatch);
-// }
 
 export default connect(
   mapStateToProps,

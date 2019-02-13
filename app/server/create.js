@@ -26,16 +26,13 @@ const getFilesRecursively = path => {
 ipcMain.on("createList:start", (event, dataForm) => {
   console.log("PASSAGE SERV CREATE LIST", dataForm);
   let { nameFile, destinationFolder, sourceFolder } = dataForm;
-  //sourceFolder = sourceFolder.replace("\\", "/");
   console.log(sourceFolder);
   let data = [];
-  // console.log(getFilesRecursively(sourceFolder));
   readdirp({ root: sourceFolder })
     .on("data", function(entry) {
       data.push(entry);
     })
     .on("end", () => {
-      console.log(data);
       let names = data.map(a => a.name);
       writeFileSync(join(sourceFolder, nameFile), names.join("\r\n"), "utf-8");
     });
