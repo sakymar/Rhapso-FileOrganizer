@@ -63,14 +63,26 @@ app.on("ready", async () => {
     await installExtensions();
   }
 
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 1200,
-    darkTheme: true,
-    frame: false,
-    height: 700,
-    title: "Rhapso-FileOrganizer"
-  });
+  if (process.platform === "darwin") {
+    mainWindow = new BrowserWindow({
+      show: false,
+      width: 1200,
+      darkTheme: true,
+      frame: true,
+      titleBarStyle: "hidden",
+      height: 700,
+      title: "Rhapso-FileOrganizer"
+    });
+  } else {
+    mainWindow = new BrowserWindow({
+      show: false,
+      width: 1200,
+      darkTheme: true,
+      frame: false,
+      height: 700,
+      title: "Rhapso-FileOrganizer"
+    });
+  }
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
