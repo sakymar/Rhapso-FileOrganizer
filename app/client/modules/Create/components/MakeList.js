@@ -4,7 +4,7 @@ import { Checkbox, Button, TextField } from "@material-ui/core";
 import electron, { remote, dialog } from "electron";
 import { createList } from "../actions";
 
-const ByExtensionContainer = styled.div`
+const MakeListContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -24,7 +24,7 @@ const ByExtensionContainer = styled.div`
   .row {
     display: flex;
     flex-direction: row;
-    width: 80%;
+    width: 70%;
     justify-content: space-between;
     align-items: center;
     margin-top: 80px;
@@ -96,7 +96,7 @@ export default class MakeList extends Component {
       destinationFolder
     } = this.state;
     return (
-      <ByExtensionContainer>
+      <MakeListContainer>
         <div className="row">
           <div className="rowItem">
             <Button
@@ -117,6 +117,9 @@ export default class MakeList extends Component {
             </Button>
             <p>{destinationFolder}</p>
           </div>
+        </div>
+
+        <div className="row">
           <div
             style={{
               display: "flex",
@@ -135,8 +138,20 @@ export default class MakeList extends Component {
             />
             <p>Include sub-directories</p>
           </div>
+          <div>
+            <p>Name of the file</p>
+            <TextField
+              className="inputNameFile"
+              value={this.state.nameFile}
+              onChange={e => this.setState({ nameFile: e.target.value })}
+            />
+          </div>
         </div>
-      </ByExtensionContainer>
+        <hr className="separator" />
+        <Button className="submitButton" onClick={() => createList(this.state)}>
+          Validate
+        </Button>
+      </MakeListContainer>
     );
   }
 }

@@ -80,6 +80,11 @@ a:hover {
   src: url(./assets/fonts/Raleway/Raleway-Light.ttf);
 }
 
+@font-face {
+  font-family: OpenSans;
+  src: url(./assets/fonts/Open_Sans/OpenSans-Regular.ttf);
+}
+
 .title {
   font-family: "Raleway", sans-serif;
   font-size: 35px;
@@ -90,7 +95,7 @@ a:hover {
 
 .containerScreen {
   margin-left: 8%;
-  padding: 3%;
+  padding: 1%;
   min-height: 100vh;
   background: linear-gradient(120.41deg, #442c84, #021f46 70.42%, #07046b);
   -webkit-app-region: no-drag;
@@ -119,4 +124,7 @@ a:hover {
 
 .MuiInput-underline-10 {
   color: white !important;
+}
+.MuiPaper-elevation4-15 {
+  box-shadow: none !important;
 }

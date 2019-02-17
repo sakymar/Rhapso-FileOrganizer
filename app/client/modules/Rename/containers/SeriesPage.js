@@ -8,11 +8,12 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Title from "../../../components/Title";
 import SerieList from "../components/SerieList";
 
+import TabNavigation from "../../../components/TabNavigation";
 import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import ByDate from "./ByDate";
 import ByExtension from "./ByExtension";
+
+import { renameByDate } from "../actions";
 
 class SeriesPage extends Component {
   constructor(props) {
@@ -23,7 +24,8 @@ class SeriesPage extends Component {
       videos: [],
       completed: 0,
       loading: false,
-      destinationFolder: ""
+      destinationFolder: "",
+      tabIndex: 0
     };
   }
 
@@ -47,8 +49,11 @@ class SeriesPage extends Component {
       );
     } else {
       return (
-        <h2 className="drop-message">
-          Drag and drop some files on me, or click to select.
+        <h2
+          className="drop-message"
+          style={{ textAlign: "center", fontSize: 22 }}
+        >
+          Or directly Drag and drop or select files here
         </h2>
       );
     }
@@ -60,8 +65,6 @@ class SeriesPage extends Component {
     const videos = await _.map(files, ({ name, path, size, type }) => {
       return { name, path, size, type };
     });
-
-    console.log("ONDROP", files, videos);
     if (videos.length) {
       this.setState({ videos });
       this.props.addSeries({
@@ -81,13 +84,20 @@ class SeriesPage extends Component {
     this.props.convertSeries(this.props.series);
   };
 
-  changeDestinationFolder = () => {
+  changeDestinationFolder = field => {
     let path = remote.dialog.showOpenDialog({
       properties: ["openDirectory"]
     });
     if (path) {
       path = path[0];
-      this.setState({ destinationFolder: path });
+      if (
+        this.state.destinationFolder === "Not defined" &&
+        field !== "destinationFolder"
+      ) {
+        this.setState({ [field]: path, destinationFolder: path });
+      } else {
+        this.setState({ [field]: path });
+      }
     }
   };
 
@@ -97,24 +107,25 @@ class SeriesPage extends Component {
     this.setState({ formatDate });
   };
 
-  render() {
-    const { format, loading, completed } = this.state;
-
-    const options = [
-      {
-        value: 0,
-        label: "By Date"
-      },
-      {
-        value: 2,
-        label: "By Extension"
-      },
-      {
-        value: 3,
-        label: "By Serie Format"
+  handleChangeFormatDate = (value, indexValue) => {
+    let { formatDate } = this.state;
+    let newFormatDate = [];
+    console.log("FORMAT DATE ENTER", formatDate);
+    formatDate.forEach((date, index) => {
+      if (index === indexValue) {
+        newFormatDate.push(value);
+      } else if (date < newFormatDate[index - 1]) {
+        newFormatDate.push(newFormatDate[index - 1] + 1);
+      } else {
+        newFormatDate.push(date);
       }
-    ];
+    });
+    console.log("FORMAT DATE RESULT", newFormatDate);
+    this.setState({ formatDate: newFormatDate });
+  };
 
+  render() {
+    const { format, loading, completed, tabIndex } = this.state;
     return (
       <div className="containerScreen">
         <Title title="Move / Rename" />
@@ -123,32 +134,12 @@ class SeriesPage extends Component {
           position="static"
           color="default"
         >
-          <Tabs
-            style={{ backgroundColor: "transparent" }}
-            value={this.state.tabIndex}
-            onChange={(event, value) => this.setState({ tabIndex: value })}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="fullWidth"
-          >
-            <Tab style={{ color: "white" }} label="By Extension" />
-            <Tab style={{ color: "white" }} label="By Date" />
-            <Tab style={{ color: "white" }} label="By Serie Format" />
-          </Tabs>
+          <TabNavigation
+            labels={["By Extension", "By Date", "By Serie Format"]}
+            onChange={tabIndex => this.setState({ tabIndex })}
+            value={tabIndex}
+          />
         </AppBar>
-        {/* <SelectFormat
-          value={format}
-          onChange={value => this.setState({ format: value })}
-          options={options}
-          style={{
-            color: "white",
-            minWidth: 300,
-            borderBottom: "1px solid white",
-            marginLeft: 30,
-            fontSize: 16
-          }}
-          classes={{ icon: { color: "white" } }}
-        /> */}
         {this.state.tabIndex === 0 && (
           <ByExtension
             recursive={this.state.recursive}
@@ -164,8 +155,14 @@ class SeriesPage extends Component {
         {this.state.tabIndex === 1 && (
           <ByDate
             formatDate={this.state.formatDate}
+            changeDestinationFolder={field =>
+              this.changeDestinationFolder(field)
+            }
+            sourceFolder={this.state.sourceFolder}
             destinationFolder={this.state.destinationFolder}
-            handleChangeFormatDate={this.handleChangeFormatDate}
+            handleChangeFormatDate={(value, index) =>
+              this.handleChangeFormatDate(value, index)
+            }
             handleRemoveFormatDate={index => this.handleRemoveFormatDate(index)}
             handleAddFormatDate={value => this.setState({ formatDate: value })}
           />
@@ -196,7 +193,7 @@ class SeriesPage extends Component {
             margin: "auto"
           }}
         >
-          {loading ? (
+          {/* {loading ? (
             <LinearProgress
               style={{ width: "15px" }}
               variant="determinate"
@@ -204,7 +201,7 @@ class SeriesPage extends Component {
             />
           ) : (
             ""
-          )}
+          )} */}
         </div>
 
         <div style={{ marginTop: "50px" }}>
@@ -229,7 +226,7 @@ class SeriesPage extends Component {
             }}
             icon
             labelPosition="right"
-            onClick={this.convertSeries}
+            onClick={() => renameByDate(this.state)}
           >
             Confirm
             <Icon name="right arrow" />

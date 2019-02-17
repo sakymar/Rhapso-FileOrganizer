@@ -4,30 +4,95 @@ import SelectFormat from "../../../components/SelectFormat";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
 import CloseIcon from "@material-ui/icons/Close";
+import styled from "styled-components";
+
+const ByDateContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white !important;
+  font-family: Opensans;
+  font-size: 14px;
+
+  input {
+    color: white !important;
+  }
+
+  p {
+    font-size: 14px !important;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .rowItem {
+    display: flex;
+    flex-direction: row;
+    width: 30%;
+    align-items: center;
+  }
+
+  .rowItem p {
+    margin-left: 10px;
+  }
+
+  .submitButton {
+    color: white;
+    background-color: #f76d3a;
+  }
+
+  .separator {
+    width: 50%;
+    margin-top: 100px;
+    margin-bottom: 20px;
+    color: white;
+    border-width: 0.5px !important;
+  }
+
+  .inputNameFile {
+    border-bottom: 1px solid white !important;
+  }
+
+  .resultFormat {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .resultFormat p {
+    margin: 0 !important;
+    font-size: 12px;
+  }
+`;
 
 const dateOptions = [
   {
     value: 0,
-    label: "Decade"
-  },
-  {
-    value: 1,
     label: "Year"
   },
   {
-    value: 2,
+    value: 1,
     label: "Month"
   },
   {
-    value: 3,
+    value: 2,
     label: "Week"
   },
   {
-    value: 4,
+    value: 3,
     label: "Day"
   },
   {
-    value: 5,
+    value: 4,
     label: "Hour"
   }
 ];
@@ -38,20 +103,34 @@ const ByDate = ({
   handleRemoveFormatDate,
   changeDestinationFolder,
   handleAddFormatDate,
+  sourceFolder,
   destinationFolder
 }) => {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyConten: "center",
-        alignItems: "center",
-        marginTop: 20
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Button onClick={changeDestinationFolder}>Destination Folder</Button>
+    <ByDateContainer>
+      <div className="row">
+        <div className="rowItem">
+          <Button
+            className="submitButton"
+            onClick={() => changeDestinationFolder("sourceFolder")}
+          >
+            Source Folder
+          </Button>
+          <p>{sourceFolder}</p>
+        </div>
+
+        <div className="rowItem">
+          <Button
+            className="submitButton"
+            onClick={() => changeDestinationFolder("destinationFolder")}
+          >
+            Destination Folder
+          </Button>
+          <p>{destinationFolder}</p>
+        </div>
+      </div>
+      <div className="row">
+        <p>Format : </p>
         {formatDate.map((format, index) => (
           <div>
             <SelectFormat
@@ -74,10 +153,10 @@ const ByDate = ({
               variant="fab"
               color="secondary"
               style={{
-                width: 30,
-                height: 30,
-                minHeight: 30,
-                minWidth: 30
+                width: 25,
+                height: 25,
+                minHeight: 25,
+                minWidth: 25
               }}
               onClick={() => handleRemoveFormatDate(index)}
             >
@@ -86,6 +165,7 @@ const ByDate = ({
             /
           </div>
         ))}
+
         <Button
           onClick={() =>
             handleAddFormatDate([
@@ -96,10 +176,10 @@ const ByDate = ({
             ])
           }
           style={{
-            width: 30,
-            height: 30,
-            minHeight: 30,
-            minWidth: 30
+            width: 25,
+            height: 25,
+            minHeight: 25,
+            minWidth: 25
           }}
           variant="fab"
           color="secondary"
@@ -108,22 +188,14 @@ const ByDate = ({
           <AddIcon />
         </Button>
       </div>
-      <div
-        style={{
-          marginTop: 10,
-          marginBottom: 20,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          fontSize: 12
-        }}
-      >
+
+      <div className="resultFormat">
         <p>Example : folder/file --> {destinationFolder} </p>
         {formatDate.map(part => (
           <p style={{ fontSize: 12 }}>{dateOptions[part].label}/</p>
         ))}
       </div>
-    </div>
+    </ByDateContainer>
   );
 };
 
