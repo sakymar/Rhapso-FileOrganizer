@@ -4,7 +4,13 @@ import { join } from "path";
 var readdirp = require("readdirp");
 
 ipcMain.on("createList:start", (event, dataForm) => {
-  let { nameFile, destinationFolder, sourceFolder, recursive } = dataForm;
+  let {
+    nameFile,
+    destinationFolder,
+    sourceFolder,
+    recursive,
+    format
+  } = dataForm;
   let data = [];
   let options = {
     root: sourceFolder
@@ -13,15 +19,16 @@ ipcMain.on("createList:start", (event, dataForm) => {
     options.depth = 0;
   }
 
-  readdirp(options)
+  readdirp(sourceFolder)
     .on("data", function(entry) {
       data.push(entry);
     })
     .on("end", () => {
-      let names = data.map(a => a.name);
+      console.log("DATA", data);
+      let names = data.map(a => a.basename);
       writeFileSync(
-        join(destinationFolder, nameFile),
-        names.join("\r\n"),
+        join(destinationFolder, `${nameFile}.${format}`),
+        names.join(format === "txt" ? "\r\n" : ","),
         "utf-8"
       );
     });

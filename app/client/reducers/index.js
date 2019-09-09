@@ -1,11 +1,12 @@
 // @flow
-import { combineReducers } from 'redux';
-import { routerReducer as router } from 'react-router-redux';
-import videosReducer from './videos_reducer'; 
+import { combineReducers } from "redux";
+import { connectRouter } from "connected-react-router";
+import videos_reducer from "./videos_reducer";
+import { i18nReducer } from "react-redux-i18n";
 
-const rootReducer = combineReducers({
-  series:videosReducer,
-  router,
-});
-
-export default rootReducer;
+export default function createRootReducer(history) {
+  return combineReducers<{}, *>({
+    videos: videos_reducer,
+    i18n: i18nReducer
+  });
+}

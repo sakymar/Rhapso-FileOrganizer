@@ -17,7 +17,6 @@ const TabNavigationContainer = styled.div`
 `;
 
 const TabNavigation = ({ labels, onChange, value }) => {
-  console.log(value);
   return (
     <TabNavigationContainer>
       <Tabs
@@ -29,8 +28,6 @@ const TabNavigation = ({ labels, onChange, value }) => {
         variant="fullWidth"
       >
         {labels.map((label, index) => {
-          console.log(index, value, index === value);
-
           return (
             <Tab
               style={{ color: "white" }}

@@ -1,8 +1,15 @@
 import React, { Component } from "react";
 import styled from "styled-components";
-import { Checkbox, Button, TextField } from "@material-ui/core";
+import {
+  Checkbox,
+  Button,
+  TextField,
+  Select,
+  MenuItem
+} from "@material-ui/core";
 import electron, { remote, dialog } from "electron";
 import { createList } from "../actions";
+import { I18n } from "react-redux-i18n";
 
 const MakeListContainer = styled.div`
   display: flex;
@@ -63,7 +70,7 @@ export default class MakeList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      format: 0,
+      format: "txt",
       recursive: false,
       sourceFolder: "Not defined",
       destinationFolder: "Not defined"
@@ -147,7 +154,23 @@ export default class MakeList extends Component {
             />
           </div>
         </div>
-        <hr className="separator" />
+        <div
+          className="row"
+          style={{ backgroundColor: "white", color: "black" }}
+        >
+          <p>{I18n.t("makeList.format")}</p>
+          <Select
+            inputProps={{
+              name: "format",
+              id: "format"
+            }}
+            value={format}
+            onChange={event => this.setState({ format: event.target.value })}
+          >
+            <MenuItem value="txt">Text</MenuItem>
+            <MenuItem value="csv">CSV</MenuItem>
+          </Select>
+        </div>
         <Button className="submitButton" onClick={() => createList(this.state)}>
           Validate
         </Button>

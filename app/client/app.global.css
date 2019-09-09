@@ -11,6 +11,13 @@ body {
   background-color: white;
   font-family: Arial, Helvetica, Helvetica Neue, serif;
   overflow-y: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
 }
 
 h2 {
@@ -94,9 +101,9 @@ a:hover {
 }
 
 .containerScreen {
-  margin-left: 8%;
-  padding: 1%;
-  min-height: 100vh;
+  padding: 30px;
+  height: calc(100vh - 60px);
+  min-width: calc(90vw - 60px);
   background: linear-gradient(120.41deg, #442c84, #021f46 70.42%, #07046b);
   -webkit-app-region: no-drag;
   overflow-y: scroll;
@@ -108,10 +115,6 @@ a:hover {
 
 .titleBar:hover {
   cursor: pointer;
-}
-
-.ui.sidebar {
-  margin-top: 30px !important;
 }
 
 .noDrag {

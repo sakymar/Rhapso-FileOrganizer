@@ -9,6 +9,22 @@ import {
   Header
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+
+// const SidebarContainer = styled.div`
+//   background-color:#7E2991;
+//   overflow:hidden;
+//   display:flex;
+//   flex-direction:column;
+//   padding:0;
+//   width:10vw;
+// `
+
+// const Sidebar = () => (
+
+// );
+
+// export default Sidebar;
 
 export default class Sidebar extends Component {
   render() {
@@ -23,7 +39,7 @@ export default class Sidebar extends Component {
         vertical
         inverted
         style={{
-          width: "8%",
+          width: "10vw",
           overflow: "hidden",
           backgroundColor: "#7E2991"
         }}
@@ -53,13 +69,13 @@ export default class Sidebar extends Component {
           </Menu.Item>
         </Link>
 
-        <Link to={"/delete"}>
+        <Link to={"/stats"}>
           <Menu.Item name="chart bar outline">
             <Icon name="chart bar outline" />
             <p style={{ fontSize: 15 }}>Stats</p>
           </Menu.Item>
         </Link>
-        <Link to={"/delete"}>
+        <Link to={"/settings"}>
           <Menu.Item name="settings">
             <Icon name="settings" />
             <p style={{ fontSize: 15 }}>Settings</p>

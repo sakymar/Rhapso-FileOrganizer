@@ -1,19 +1,26 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as actions from "../../../actions/series";
-import Dropzone from "react-dropzone";
 import { Button, Icon } from "semantic-ui-react";
 import { remote } from "electron";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import Title from "../../../components/Title";
 import SerieList from "../components/SerieList";
-
 import TabNavigation from "../../../components/TabNavigation";
 import AppBar from "@material-ui/core/AppBar";
 import ByDate from "./ByDate";
 import ByExtension from "./ByExtension";
+import fs from "fs";
+import moment from "moment";
 
-import { renameByDate } from "../actions";
+import { renameFiles } from "../actions";
+
+const VALUE_TO_MOMENT = {
+  0: date => moment(date).format("YYYY"),
+  1: date => moment(date).format("MMMM"),
+  2: date => `Week - ${moment(date).format("w")}`,
+  3: date => `Day - ${moment(date).format("D")}`,
+  4: date => `${moment(date).format("D")}h`
+};
 
 class SeriesPage extends Component {
   constructor(props) {
@@ -28,51 +35,6 @@ class SeriesPage extends Component {
       tabIndex: 0
     };
   }
-
-  componentDidMount() {
-    this.setState({
-      completed: this.props.progress * 100,
-      loading: this.props.progress * 100 === 100
-    });
-  }
-
-  renderChildren({ isDragActive, isDragReject }) {
-    if (isDragActive) {
-      return (
-        <h2 className="drop-message">Omnomnom, let me have those videos!</h2>
-      );
-    } else if (isDragReject) {
-      return (
-        <h2 className="drop-message">
-          Uh oh, I don't know how to deal with that type of file!
-        </h2>
-      );
-    } else {
-      return (
-        <h2
-          className="drop-message"
-          style={{ textAlign: "center", fontSize: 22 }}
-        >
-          Or directly Drag and drop or select files here
-        </h2>
-      );
-    }
-  }
-
-  onDrop = async files => {
-    // invalid file types are not added to files object
-    //console.log("PASSAGE");
-    const videos = await _.map(files, ({ name, path, size, type }) => {
-      return { name, path, size, type };
-    });
-    if (videos.length) {
-      this.setState({ videos });
-      this.props.addSeries({
-        series: videos,
-        destinationFolder: this.state.destinationFolder
-      });
-    }
-  };
 
   removeSerie(serie) {
     this.props.removeSerie(serie);
@@ -110,7 +72,6 @@ class SeriesPage extends Component {
   handleChangeFormatDate = (value, indexValue) => {
     let { formatDate } = this.state;
     let newFormatDate = [];
-    console.log("FORMAT DATE ENTER", formatDate);
     formatDate.forEach((date, index) => {
       if (index === indexValue) {
         newFormatDate.push(value);
@@ -120,9 +81,49 @@ class SeriesPage extends Component {
         newFormatDate.push(date);
       }
     });
-    console.log("FORMAT DATE RESULT", newFormatDate);
     this.setState({ formatDate: newFormatDate });
   };
+
+  formatOutputPathExtension(path, name) {
+    const extension = name.split(".").pop();
+    return `${path.replace(name, "")}${extension}/${name}`;
+  }
+
+  handleOpenFiles() {
+    const paths = remote.dialog.showOpenDialog({
+      properties: ["openFile", "multiSelections"]
+    });
+    const { formatDate } = this.state;
+    if (paths && paths.length > 0) {
+      const series = paths.map(item => {
+        const infos = fs.statSync(item);
+        console.log("INFOS", infos);
+        const path = item;
+
+        const name = item.split("/").pop();
+        let outputPath = path.replace(name, "");
+        formatDate.forEach(date => {
+          outputPath = `${outputPath}${VALUE_TO_MOMENT[date](infos.mtime)}/`;
+        });
+
+        outputPath = `${outputPath}${name}`;
+        return {
+          path,
+          name,
+          outputName: name,
+          outputPath
+        };
+      });
+      this.setState({ series });
+    }
+    console.log(paths);
+  }
+
+  onRemoveElement(serie) {
+    this.setState({
+      series: this.state.series.filter(item => item.path !== serie.path)
+    });
+  }
 
   render() {
     const { format, loading, completed, tabIndex } = this.state;
@@ -168,22 +169,48 @@ class SeriesPage extends Component {
           />
         )}
         <div style={{ maxHeight: "60vh", overflowY: "scroll" }}>
-          {this.props.series.length > 0 ? (
+          {this.state.series && this.state.series.length > 0 ? (
             <SerieList
-              series={this.props.series}
-              onRemoveElement={serie => this.removeSerie(serie)}
+              series={this.state.series}
+              onRemoveElement={serie => this.onRemoveElement(serie)}
               onDrop={this.onDrop}
             />
           ) : (
-            <Dropzone
-              onDrop={this.onDrop}
-              multiple
-              className="dropzone"
-              activeClassName="dropzone-active"
-              rejectClassName="dropzone-reject"
+            <div
+              onClick={() => this.handleOpenFiles()}
+              onDrop={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.setState({
+                  series: Object.values(e.dataTransfer.files).map(item => ({
+                    ...item,
+                    name: item.name,
+                    path: item.path,
+                    outputName: item.name,
+                    outputPath: this.formatOutputPathExtension(
+                      item.path,
+                      item.name
+                    )
+                  }))
+                });
+                console.log("DRAG START", e.dataTransfer.files);
+              }}
+              onDragOver={e => {
+                e.stopPropagation();
+                e.preventDefault();
+                console.log("DRAGOVER", e);
+              }}
+              style={{
+                width: "100%",
+                height: "20vh",
+                border: "5px solid red",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
             >
-              {this.renderChildren}
-            </Dropzone>
+              <p>drag n drop baby</p>
+            </div>
           )}
         </div>
         <div
@@ -226,7 +253,7 @@ class SeriesPage extends Component {
             }}
             icon
             labelPosition="right"
-            onClick={() => renameByDate(this.state)}
+            onClick={() => renameFiles(this.state.series)}
           >
             Confirm
             <Icon name="right arrow" />

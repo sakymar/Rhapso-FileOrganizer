@@ -95,6 +95,7 @@ export default class MakeList extends Component {
       sourceFolder,
       destinationFolder
     } = this.state;
+    console.log("DESTINATION FOLDER");
     return (
       <ByExtensionContainer>
         <div className="row">

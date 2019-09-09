@@ -7,3 +7,7 @@ export const renameByExtensions = sourceFolder => {
 export const renameByDate = dataForm => {
   ipcRenderer.send("dateRename:start", dataForm);
 };
+
+export const renameFiles = files => {
+  ipcRenderer.send("renameFiles:start", files);
+};

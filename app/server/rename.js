@@ -80,3 +80,18 @@ ipcMain.on("dateRename:start", (event, dataForm) => {
       });
     });
 });
+
+ipcMain.on("renameFiles:start", (event, files) => {
+  files.forEach(file => {
+    mv(
+      file.path,
+      file.outputPath,
+      {
+        mkdirp: true
+      },
+      function(err) {
+        if (err) throw err;
+      }
+    );
+  });
+});

@@ -11,6 +11,9 @@
  * @flow
  */
 import { app, BrowserWindow, ipcMain } from "electron";
+
+require("electron-reload")(__dirname);
+
 import MenuBuilder from "./menu";
 const fs = require("fs");
 const mv = require("mv");
