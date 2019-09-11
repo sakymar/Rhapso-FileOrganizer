@@ -1,19 +1,10 @@
 import React from "react";
-import Dropzone from "react-dropzone";
-import { Button, Icon } from "semantic-ui-react";
-import electron, { remote, dialog } from "electron";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
-import AddIcon from "@material-ui/icons/Add";
-import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
-import fileEntryCache from "file-entry-cache";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import styled from "styled-components";
 const SerieListContainer = styled.div`
   display: flex;

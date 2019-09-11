@@ -9,9 +9,9 @@ const ButtonContainer = styled.div`
   ${props => props.styles};
 `;
 
-const Button = ({ label }) => (
-  <ButtonContainer styles={styles}>
-    <p>{label}</p>
+const Button = ({ children, onClick, styles, label }) => (
+  <ButtonContainer onClick={() => onClick()} styles={styles}>
+    {children}
   </ButtonContainer>
 );
 
