@@ -240,31 +240,29 @@ class Size extends Component {
           </div>
         )}
 
-        <React.Fragment>
-          <Button
-            onClick={() =>
-              this.setState({
-                allFiles: [],
-                selectedFiles: [],
-                checkedSizes: {}
-              })
-            }
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              deleteFiles(selectedFiles.map(item => item.fullPath));
-              this.setState({
-                selectedFiles: [],
-                allFiles: [],
-                checkedSizes: []
-              });
-            }}
-          >
-            Confirm
-          </Button>
-        </React.Fragment>
+        <Button
+          onClick={() =>
+            this.setState({
+              allFiles: [],
+              selectedFiles: [],
+              checkedSizes: {}
+            })
+          }
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={() => {
+            deleteFiles(selectedFiles.map(item => item.fullPath));
+            this.setState({
+              selectedFiles: [],
+              allFiles: [],
+              checkedSizes: []
+            });
+          }}
+        >
+          Confirm
+        </Button>
       </SizeContainer>
     );
   }

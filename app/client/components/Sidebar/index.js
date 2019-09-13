@@ -75,6 +75,12 @@ export default class Sidebar extends Component {
             <p style={{ fontSize: 15 }}>Stats</p>
           </Menu.Item>
         </Link>
+        <Link to={"/rules"}>
+          <Menu.Item name="rules">
+            <Icon name="settings" />
+            <p style={{ fontSize: 15 }}>Rules</p>
+          </Menu.Item>
+        </Link>
         <Link to={"/settings"}>
           <Menu.Item name="settings">
             <Icon name="settings" />

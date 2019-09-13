@@ -10,6 +10,7 @@ import {
 import electron, { remote, dialog } from "electron";
 import { createList } from "../actions";
 import { I18n } from "react-redux-i18n";
+import SaveButton from "../../../components/SaveButton";
 
 const MakeListContainer = styled.div`
   display: flex;
@@ -174,6 +175,15 @@ export default class MakeList extends Component {
         <Button className="submitButton" onClick={() => createList(this.state)}>
           Validate
         </Button>
+        <SaveButton
+          data={{
+            ...this.state,
+            sourceFolders: [sourceFolder],
+            type: "List",
+            action: "Create",
+            active: false
+          }}
+        />
       </MakeListContainer>
     );
   }

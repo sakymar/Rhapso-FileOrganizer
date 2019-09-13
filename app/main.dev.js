@@ -12,7 +12,9 @@
  */
 import { app, BrowserWindow, ipcMain } from "electron";
 
-require("electron-reload")(__dirname);
+require("electron-reload")(__dirname, {
+  electron: require("${__dirname}/../../node_modules/electron")
+});
 
 import MenuBuilder from "./menu";
 const fs = require("fs");
