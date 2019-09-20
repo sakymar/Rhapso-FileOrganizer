@@ -1,5 +1,7 @@
-import colors from "./colors";
+import darkTheme from "./darkTheme";
+import lightTheme from "./lightTheme";
 
 export default {
-  colors
+  darkTheme,
+  lightTheme
 };

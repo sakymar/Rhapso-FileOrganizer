@@ -16,7 +16,6 @@ const handleAddRule = data => {
   if (!rules) {
     rules = [];
   }
-  console.log(data);
   const newId = uuidv4();
   storage.set("rules", { ...rules, [newId]: { ...data, id: newId } });
 };

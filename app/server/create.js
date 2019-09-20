@@ -24,7 +24,6 @@ ipcMain.on("createList:start", (event, dataForm) => {
       data.push(entry);
     })
     .on("end", () => {
-      console.log("DATA", data);
       let names = data.map(a => a.basename);
       writeFileSync(
         join(destinationFolder, `${nameFile}.${format}`),

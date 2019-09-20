@@ -168,7 +168,6 @@ class Extension extends Component {
             onDragOver={e => {
               e.stopPropagation();
               e.preventDefault();
-              console.log("DRAGOVER", e);
             }}
             style={{
               width: "100%",

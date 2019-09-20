@@ -21,7 +21,7 @@ const Label = styled.p`
 class Settings extends Component {
   constructor(props) {
     super(props);
-    this.state = { theme: "dark", lang: "fr" };
+    this.state = { theme: true, lang: "fr" };
   }
 
   async componentDidMount() {

@@ -50,13 +50,11 @@ class SeriesPage extends Component {
     const paths = remote.dialog.showOpenDialog({
       properties: ["openFile", "openDirectory", "multiSelections"]
     });
-    console.log("PATH ON CLICK", paths);
     this.handleOpenFiles(paths);
   }
 
   async handleOpenFiles(paths) {
     const { recursive } = this.state;
-    console.log("PATHS HANDLE OPEN", paths);
     const files = [];
     if (paths && paths.length > 0) {
       for (let path of paths) {
@@ -89,7 +87,6 @@ class SeriesPage extends Component {
       files,
       checkedExtensions: [...new Set(files.map(item => item.extension))]
     });
-    console.log(files);
   }
 
   onRemoveElement(serie) {
@@ -129,7 +126,6 @@ class SeriesPage extends Component {
       data = [];
     }
 
-    console.log("DATA IS", data);
     return (
       <div className="containerScreen">
         <div style={{ maxHeight: "60vh", overflowY: "scroll" }}>
@@ -191,12 +187,10 @@ class SeriesPage extends Component {
                 e.preventDefault();
                 e.stopPropagation();
                 this.handleOpenFiles(Object.values(e.dataTransfer.files));
-                console.log("DRAG START", e.dataTransfer.files);
               }}
               onDragOver={e => {
                 e.stopPropagation();
                 e.preventDefault();
-                console.log("DRAGOVER", e);
               }}
               style={{
                 width: "100%",

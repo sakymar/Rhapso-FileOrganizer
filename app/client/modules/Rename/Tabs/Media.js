@@ -54,13 +54,11 @@ class SeriesPage extends Component {
     const paths = remote.dialog.showOpenDialog({
       properties: ["openFile", "openDirectory", "multiSelections"]
     });
-    console.log("PATH ON CLICK", paths);
     this.handleOpenFiles(paths);
   }
 
   async handleOpenFiles(paths) {
     const { recursive } = this.state;
-    console.log("PATHS HANDLE OPEN", paths);
     const files = [];
     if (paths && paths.length > 0) {
       for (let path of paths) {
@@ -84,7 +82,6 @@ class SeriesPage extends Component {
     const { destinationFolder } = this.state;
     const series = [...data].map(item => {
       const name = item.split("/").pop();
-      console.log("NAME NORMAL", name);
       try {
         const extension = name.split(".").pop();
         const nameWithoutExtension = name.replace(`.${extension}`, "");
@@ -102,7 +99,6 @@ class SeriesPage extends Component {
           return { name, outputName, outputPath, path: item };
         }
 
-        console.log("OUTPUTNAME", formattedItem.name, outputName);
       } catch (e) {
         console.log(e);
       }
@@ -114,7 +110,6 @@ class SeriesPage extends Component {
       // outputPath: this.formatOutputPath(item.path, item.name)
     });
     this.setState({ series });
-    console.log(series);
   }
 
   onRemoveElement(serie) {
@@ -188,12 +183,10 @@ class SeriesPage extends Component {
                 e.preventDefault();
                 e.stopPropagation();
                 this.handleOpenFiles(Object.values(e.dataTransfer.files));
-                console.log("DRAG START", e.dataTransfer.files);
               }}
               onDragOver={e => {
                 e.stopPropagation();
                 e.preventDefault();
-                console.log("DRAGOVER", e);
               }}
               style={{
                 width: "100%",

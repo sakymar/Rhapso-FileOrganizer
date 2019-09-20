@@ -5,20 +5,15 @@ var readdirp = require("readdirp");
 const mv = require("mv");
 
 ipcMain.on("extensionRename:start", (event, sourceFolder) => {
-  console.log("PASSAGE SERV CREATE LIST", sourceFolder);
-  console.log(sourceFolder);
   let data = [];
   readdirp({ root: sourceFolder })
     .on("data", function(entry) {
-      console.log(entry);
       data.push(entry);
     })
     .on("end", () => {
       data.forEach(file => {
         let fileName = file.name;
         let extension = file.name.split(".").pop();
-        console.log(file.fullPath);
-        console.log(join(sourceFolder, `${extension}/${fileName}`));
         mv(
           file.fullPath,
           join(sourceFolder, `${extension}/${fileName}`),
@@ -59,14 +54,10 @@ ipcMain.on("dateRename:start", (event, dataForm) => {
         let fileName = file.name;
         let extension = file.name.split(".").pop();
         let newPath = "";
-        console.log("STAT", file.stat);
-        console.log("FORM DATES", formatDate);
-        console.log("STAT TIME", file.stat.mtime);
         formatDate.forEach(date => {
           newPath = `${newPath}/${valueToMoment[date](file.stat.mtime)}`;
         });
         newPath = `${newPath}/${fileName}`;
-        console.log(newPath);
         mv(
           file.fullPath,
           join(destinationFolder, newPath),

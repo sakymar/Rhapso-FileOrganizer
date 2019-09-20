@@ -26,6 +26,7 @@ import "react-cron-builder/dist/bundle.css";
 import actions from "../../actions";
 import chokidar from "chokidar";
 import schedule from "node-schedule";
+import jobsHandler from "../../services/JobsHandler";
 
 const RulesContainer = styled.div`
   display: grid;
@@ -57,6 +58,15 @@ class Rules extends Component {
     const { rules } = this.state;
     const rule = Object.values(rules).find(item => item.id === id);
     rule.active = !rule.active;
+    if (rule.active) {
+      if (rule.cron || rule.planOnce) {
+        jobsHandler.removeJob(id);
+      }
+      if (rule.watch) {
+        jobsHandler.removeObserver(id);
+      }
+    }
+
     storage.set("rules", { ...rules, [rule.id]: rule });
     this.setState({ rules: { ...rules, [rule.id]: rule } });
   }
@@ -83,12 +93,20 @@ class Rules extends Component {
 
   deleteRule(id) {
     const { rules } = this.state;
+    const rule = Object.values(rules).find(item => item.id === id);
+    if (rule.cron || rule.planOnce) {
+      jobsHandler.removeJob(id);
+    }
+    if (rule.watch) {
+      jobsHandler.removeObserver(id);
+    }
+
     storage.set("rules", rules.filter(item => item.id != id));
     this.setState({ rules: rules.filter(item => item.id != id) });
   }
 
   componentDidMount() {
-    let rules = storage.get("rules");
+    const rules = storage.get("rules");
     this.setState({ rules });
   }
 
@@ -99,61 +117,103 @@ class Rules extends Component {
     const hours = planOnce.time.getHours();
     const minutes = planOnce.time.getMinutes();
     const finalDate = planOnce.date.setHours(hours, minutes, 0);
-    if (openedRule.confirm) {
-      const { rules } = this.state;
-      const rule = Object.values(rules).find(item => item.id === openedRule.id);
-      schedule.scheduleJob(finalDate, () => {
-        new Notification("Rhapso - Create List", {
-          body: "Hey confirm the action"
-        });
-        rule.waitingForConfirm = true;
-        rule.active = false;
-        storage.set("rules", { ...rules, [rule.id]: rule });
-        this.setState({ rules: { ...rules, [rule.id]: rule } });
-      });
+    const { rules } = this.state;
+    const rule = Object.values(rules).find(item => item.id === openedRule.id);
+    rule.active = true;
+    rule.planOnce = finalDate;
+    rule.cron = false;
+    rule.watch = false;
+    storage.set("rules", { ...rules, [rule.id]: rule });
+    this.setState({ rules: { ...rules, [rule.id]: rule } });
 
-      rule.active = true;
-      rule.planOnce = true;
-      storage.set("rules", { ...rules, [rule.id]: rule });
-      this.setState({ rules: { ...rules, [rule.id]: rule } });
+    if (openedRule.confirm) {
+      jobsHandler.addJob({
+        id: openedRule.id,
+        temporality: finalDate,
+        action: () => {
+          new Notification("Rhapso - Create List", {
+            body: "Hey confirm the action"
+          });
+
+          rule.active = false;
+          rule.waitingForConfirm = true;
+          storage.set("rules", { ...rules, [rule.id]: rule });
+        }
+      });
     } else {
-      schedule.scheduleJob(finalDate, () => {
-        actions[openedRule.action][openedRule.type](openedRule);
+      jobsHandler.addJob({
+        id: openedRule.id,
+        temporality: finalDate,
+        action: () => {
+          actions[openedRule.action][openedRule.type](openedRule);
+
+          rule.active = false;
+          storage.set("rules", { ...rules, [rule.id]: rule });
+        }
       });
     }
   }
 
+  confirmCron() {
+    const { rules, openedRule, cron } = this.state;
+    if (openedRule.confirm) {
+      const rule = Object.values(rules).find(item => item.id === openedRule.id);
+      jobsHandler.addJob({
+        id: openedRule.id,
+        temporality: cron,
+        action: () => {
+          new Notification("Rhapso - Create List", {
+            body: "Hey confirm the action"
+          });
+          rule.waitingForConfirm = true;
+          storage.set("rules", { ...rules, [rule.id]: rule });
+          this.setState({ rules: { ...rules, [rule.id]: rule } });
+          actions[openedRule.action][openedRule.type](openedRule);
+        }
+      });
+    } else {
+      jobsHandler.addJob({
+        id: openedRule.id,
+        temporality: cron,
+        action: () => {
+          actions[openedRule.action][openedRule.type](openedRule);
+        }
+      });
+    }
+
+    rule.active = true;
+    rule.cron = cron;
+    rule.planOnce = false;
+    rule.watch = false;
+    storage.set("rules", { ...rules, [rule.id]: rule });
+    this.setState({ rules: { ...rules, [rule.id]: rule }, open: false });
+  }
+
   confirmWatch() {
+    console.log("PASSAGE CONFIRM WATCH IN THE RULE -- 1");
     const { openedRule, rules } = this.state;
     const rule = Object.values(rules).find(item => item.id === openedRule.id);
 
-    const watcher = chokidar.watch("/Users/antoinemesnil/Perso/loryne", {
-      ignored: /(^|[\/\\])\../,
-      ignoreInitial: true,
-      persistent: true
-    });
-    watcher
-      .on("add", path =>
+    console.log("PASSAGE CONFIRM WATCH IN THE RULE -- 2");
+    jobsHandler.addObserver({
+      id: openedRule.id,
+      path: "/Users/antoinemesnil/Perso/loryne",
+      depth: openedRule.recursive,
+      action: () =>
         openedRule.confirm
           ? this.setConfirmation()
-          : schedule.scheduleJob(finalDate, () => {
-              actions[openedRule.action][openedRule.type](openedRule);
-            })
-      )
-      .on("change", function(path) {
-        console.log("File", path, "has been changed");
-      })
-      .on("unlink", function(path) {
-        console.log("File", path, "has been removed");
-      })
-      .on("error", function(error) {
-        console.error("Error happened", error);
-      });
-    rule.active = true;
-    rule.watcher = true;
+          : actions[openedRule.action][openedRule.type](openedRule)
+    });
 
+    console.log("PASSAGE CONFIRM WATCH IN THE RULE -- 3");
+    rule.active = true;
+    rule.watch = "/Users/antoinemesnil/Perso/loryne";
+    rule.planOnce = false;
+    rule.cron = false;
     storage.set("rules", { ...rules, [rule.id]: rule });
     this.setState({ rules: { ...rules, [rule.id]: rule } });
+
+    console.log("PASSAGE CONFIRM WATCH IN THE RULE -- 4");
   }
 
   setConfirmation() {
@@ -163,7 +223,6 @@ class Rules extends Component {
       body: "Hey confirm the action"
     });
     rule.waitingForConfirm = true;
-    rule.active = false;
     storage.set("rules", { ...rules, [rule.id]: rule });
     this.setState({ rules: { ...rules, [rule.id]: rule } });
   }
@@ -186,18 +245,11 @@ class Rules extends Component {
     }
 
     console.log("RULES", rules);
-    console.log("ACTIONS", actions);
+    console.log("CRON", cron);
     return (
       <RulesContainer className="containerScreen">
         {Object.values(rules).map(item => (
           <div className="card">
-            {console.log(
-              "RULE FUNCTION",
-              item.action,
-              item.type,
-              actions[item.action],
-              actions[item.action][item.type]
-            )}
             <p>{item.name || "Nom regle"}</p>
             <p>{item.type}</p>
             <p>{item.action}</p>
@@ -331,11 +383,19 @@ class Rules extends Component {
               </React.Fragment>
             )}
             {typePlan === "cron" && (
-              <CronBuilder
-                cronExpression="*/4 2,12,22 * * 1-5"
-                onChange={value => console.log(value)}
-                showResult={false}
-              />
+              <React.Fragment>
+                <CronBuilder
+                  cronExpression="*/4 2,12,22 * * 1-5"
+                  onChange={value => this.setState({ cron: value })}
+                  showResult={true}
+                />
+                <Button
+                  onClick={() => this.confirmCron()}
+                  styles={`margin-top: auto, width: 200px`}
+                >
+                  Confirm
+                </Button>
+              </React.Fragment>
             )}
             {typePlan === "watch" && (
               <Button

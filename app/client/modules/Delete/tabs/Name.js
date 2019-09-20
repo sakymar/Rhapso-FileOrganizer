@@ -80,7 +80,6 @@ class NameTab extends Component {
         options.depth = 0;
       }
       const entries = await readdirp.promise(pathFolder, options);
-      console.log("ENTRIES", entries);
       allData = [...allData, ...entries];
     }
     this.setState({
@@ -91,8 +90,6 @@ class NameTab extends Component {
 
   filterFiles() {
     const { text, typeAction, allFiles } = this.state;
-    console.log("TYPE ACTION", typeAction);
-    console.log("ALL FILES", allFiles);
     if (typeAction === "start") {
       return allFiles.filter(item => String(item.basename).startsWith(text));
     }
@@ -216,7 +213,6 @@ class NameTab extends Component {
             onDragOver={e => {
               e.stopPropagation();
               e.preventDefault();
-              console.log("DRAGOVER", e);
             }}
             style={{
               width: "100%",

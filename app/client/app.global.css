@@ -4,6 +4,15 @@
  */
 @import "~font-awesome/css/font-awesome.css";
 
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 body {
   position: relative;
   color: white;
@@ -13,6 +22,8 @@ body {
   overflow-y: hidden;
   margin: 0;
   padding: 0;
+  animation-duration: 0.5s;
+  animation-name: fadein;
 }
 
 #root {

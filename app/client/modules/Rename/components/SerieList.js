@@ -14,7 +14,6 @@ const SerieListContainer = styled.div`
 `;
 
 function SerieList({ series, onRemoveElement, onDrop }) {
-  console.log("series", series);
   return (
     <SerieListContainer style={{ display: "flex" }}>
       <List

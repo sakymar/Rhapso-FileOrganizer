@@ -1,0 +1,67 @@
+/* Demo */
+body {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Animation */
+@-webkit-keyframes rotate {
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotate {
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+/* Variables */
+/* Loading Icon */
+.loading {
+  width: 200px;
+  height: 200px;
+}
+.loading__ring {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: calc(50%);
+  left: calc(50% - 50px);
+}
+.loading__ring:first-child {
+  -webkit-transform: skew(30deg, 20deg);
+  transform: skew(30deg, 20deg);
+}
+.loading__ring:last-child {
+  -webkit-transform: skew(-30deg, -20deg) scale(-1, 1);
+  transform: skew(-30deg, -20deg) scale(-1, 1);
+}
+.loading__ring:last-child svg {
+  -webkit-animation-delay: -0.5s;
+  animation-delay: -0.5s;
+}
+.loading__ring svg {
+  -webkit-animation: rotate 1s linear infinite;
+  animation: rotate 1s linear infinite;
+  fill: rgb(67, 58, 252);
+}
+
+@font-face {
+  font-family: OpenSans;
+  src: url(./app/assets/fonts/Open_Sans/OpenSans-Regular.ttf);
+}
+
+h1 {
+  font-family: "Open Sans", "Helvetica Neue", sans-serif;
+  position: absolute;
+  top: calc(50% + 100px);
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  font-weight: 200;
+}

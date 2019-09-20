@@ -80,7 +80,6 @@ class Size extends Component {
         options.depth = 0;
       }
       const entries = await readdirp.promise(pathFolder, options);
-      console.log("ENTRIES", entries);
       allData = [...allData, ...entries];
     }
     this.setState({
@@ -225,7 +224,6 @@ class Size extends Component {
             onDragOver={e => {
               e.stopPropagation();
               e.preventDefault();
-              console.log("DRAGOVER", e);
             }}
             style={{
               width: "100%",

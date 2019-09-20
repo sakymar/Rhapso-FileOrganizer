@@ -11,6 +11,7 @@
  * @flow
  */
 import { app, BrowserWindow, ipcMain } from "electron";
+import * as Splashscreen from "@trodi/electron-splashscreen";
 
 require("electron-reload")(__dirname, {
   electron: require("${__dirname}/../../node_modules/electron")
@@ -22,6 +23,7 @@ const mv = require("mv");
 const parser = require("episode-parser");
 
 let mainWindow = null;
+let splashWindow = null;
 
 if (process.env.NODE_ENV === "production") {
   const sourceMapSupport = require("source-map-support");
@@ -89,16 +91,34 @@ app.on("ready", async () => {
     });
   }
 
+  splashWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    transparent: true,
+    frame: false,
+    webPreferences: {
+      devTools: false
+    }
+  });
+  splashWindow.loadURL(`file://${__dirname}/splashScreen.html`);
+  splashWindow.focus();
   mainWindow.loadURL(`file://${__dirname}/app.html`);
+  splashWindow.focus();
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on("did-finish-load", () => {
+  ipcMain.on("loaded", () => {
+    console.log("PASSAGE RECEIVE");
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+    if (splashWindow) {
+      splashWindow.destroy();
+    }
+    splashWindow = null;
+
     mainWindow.show();
-    mainWindow.focus();
+    //mainWindow.focus();
   });
 
   mainWindow.on("closed", () => {
@@ -132,13 +152,9 @@ ipcMain.on("series:added", (event, videos) => {
     if (result) {
       //console.log("test");
       //console.log(result);
-      let outputName = `${result.show} - Season ${result.season} Episode ${
-        result.episode
-      }.${result.ext}`;
+      let outputName = `${result.show} - Season ${result.season} Episode ${result.episode}.${result.ext}`;
 
-      let outputPath = `${outputDirectory}${result.show}\\Season ${
-        result.season
-      }\\${outputName}`;
+      let outputPath = `${outputDirectory}${result.show}\\Season ${result.season}\\${outputName}`;
       //console.log("test2");
       //console.log(outputDirectory);
       //console.log(outputName);
